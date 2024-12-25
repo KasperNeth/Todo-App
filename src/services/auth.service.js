@@ -4,8 +4,18 @@ const SignUp = async ({username,email, password}) =>  {
     
     try{
         const newUser = {username, email, password}
+
+        const existingUser = await UserModel.findOne({email})
+        if(existingUser){
+            return{
+                code: 400,
+                success: false,
+                message: "User already exists"
+            }
+        }
+
+         
         const createdUser= await UserModel.create(newUser)
-        // const authHereLater = await
         return{
             code: 201,
             success: true,
@@ -64,7 +74,6 @@ const Login = async({email, password}) => {
             },
             message: "Login successful"
         }
-    //  const authHereLater = await 
     }
     catch (error){
         console.log(`Error during login: ${error.message}`)

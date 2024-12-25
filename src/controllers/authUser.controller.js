@@ -15,6 +15,8 @@ const SignUp = async(req,res) =>{
     return res.status(signupResponse.code).render('/register', { message:signupResponse.message });
   }
   const { user } = signupResponse.data;
+  session.user = user;
+  req.session.userId = {id: user._id, username: user.username, email: user.email};
   return res.status(signupResponse.code).render("Hello", { user: user,  message: signupResponse.message });
 
  }
@@ -39,7 +41,7 @@ const Login = async(req, res) => {
     }
     const { user } = loginResponse.data;
     session.user = user;
-    req.session.userId = user._id;
+    req.session.userId = {id: user._id, username: user.username, email: user.email};
     return res.status(loginResponse.code).render("Hello", { user: user,  message: loginResponse.message });
   }
   catch (error){
