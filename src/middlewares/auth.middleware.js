@@ -1,9 +1,10 @@
 const AuthenticateUser = (req, res, next) => {
-  if(req.session.user){
+  if (req.session && req.session.user){
+    req.user = req.session.user
     return next();
   }else{
     req.flash('message', 'You must be logged in to view this page');
-    return res.redirect('/login');
+    return res.redirect('/auth/login');
   }
 }
 

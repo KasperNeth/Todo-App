@@ -1,18 +1,22 @@
 const UserModel = require("../models/user.model")
 require('dotenv').config();
+
+
+
 const SignUp = async ({username,email, password}) =>  {
     
     try{
-        const newUser = {username, email, password}
+    const newUser = {username, email, password}
 
-        const existingUser = await UserModel.findOne({email})
-        if(existingUser){
-            return{
-                code: 400,
-                success: false,
-                message: "User already exists"
-            }
-        }
+    const existingUser = await UserModel.findOne({ $or:[{email, username}]});
+    if(existingUser){
+        return{ 
+        code: 409,
+        success: false,
+        data: null,
+        message: 'User already exists'
+    }
+    }
 
          
         const createdUser= await UserModel.create(newUser)
@@ -21,6 +25,7 @@ const SignUp = async ({username,email, password}) =>  {
             success: true,
             data: {
                 user:{
+                    _id: createdUser._id,
                     username: createdUser.username,
                     email: createdUser.email
                 }
@@ -68,6 +73,7 @@ const Login = async({email, password}) => {
             success: true,
             data: {
                 user:{
+                    _id: user._id,
                     username: user.username,
                     email: user.email
                 }
