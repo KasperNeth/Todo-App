@@ -1,15 +1,10 @@
 const mongoose = require('mongoose');
-const shortid = require('shortid');
 
 
 
 const TaskSchema = new mongoose.Schema({
-    _id:{
-        type: String,
-        default: shortid.generate
-    },
     user_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "user"
     },
@@ -20,7 +15,6 @@ const TaskSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
         trim: true
     },
     state: {
