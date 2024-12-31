@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Todo App</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/flashmsg.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="title">Welcome Back!</h1>
+      <p class="subtitle">Log in to continue managing your tasks.</p>
+    </header>
+
+    <main class="main-content">
+      <% if (message && message.length > 0) { %>
+        <div class="alert" id="view-alert">
+          <p><%= message %></p>
+        </div>
+      <% } %>
+
+      <form action="/auth/login" method="POST" class="register-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="submit-btn">Log In</button>
+      </form>
+
+      <div class="auth-links">
+        <p>Don't have an account? <a href="/auth/signup" class="link">Register</a></p>
+      </div>
+    </main>
+  </div>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
+
