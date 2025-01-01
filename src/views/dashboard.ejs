@@ -5,61 +5,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/flashmsg.css">
+    <link rel="stylesheet" href="/css/flashMsg.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Welcome, <%= user.username %>!</h1>
-            <% if (tasks && tasks.length > 0) { %>
+            <% if (pendingTasks.length || completedTasks.length) { %>
                 <h2 id="completion-rate">Task Completion: <%= completedPercent %>%</h2>
             <% } %>
         </header>
 
-        <% if (message) { %>
+        <% if (message && message.length > 0) { %>
             <div class="alert" id="view-alert">
                 <p><%= message %></p>
             </div>
         <% } %>
 
-        
         <button id="create-task-btn" class="primary-btn">Create Task</button>
 
-        
         <main>
-            <% if (tasks && tasks.length > 0) { %>
+            <% if (pendingTasks.length || completedTasks.length || deletedTasks.length) { %>
+        
+                <!-- Pending Tasks Dropdown -->
+                <% if (pendingTasks.length) { %>
                 <section>
-                    <h3>All Tasks</h3>
-                    <ul>
-                        <% tasks.forEach(task => { %>
+                    <h3>
+                        <button class="dropdown-toggle" data-target="pending-tasks">
+                            Pending Tasks (<%= pendingTasks.length %>)
+                        </button>
+                    </h3>
+                    <div id="pending-tasks" class="dropdown-content">
+                        <ul>
+                            <% pendingTasks.forEach(task => { %>
                             <li>
                                 <div class="task-details">
                                     <span class="task-title"><%= task.title %></span>
-                                    <span class="task-status"><%= task.state === 'completed' ? '✔️ Completed' : '❌ Pending' %></span>
+                                    <span class="task-status">❌ Pending</span>
                                 </div>
                                 <details>
                                     <summary>Options</summary>
                                     <div class="task-actions">
-                                    <% if (task.state === 'pending') { %>
+                                        <form action="/tasks/<%= task._id %>/delete" method="POST">
+                                            <button type="submit" class="danger-btn">Delete</button>
+                                        </form>
                                         <form action="/tasks/<%= task._id %>?_method=PUT" method="POST">
                                             <button type="submit" class="secondary-btn">Mark as Completed</button>
                                         </form>
-                                    <% } %>
-                                    <form action="/tasks/<%= task._id %>?_method=DELETE" method="POST">
-                                        <button type="submit" class="danger-btn">Delete</button>
-                                    </form>
-                                </div>
+                                    </div>
                                 </details>
                             </li>
-                        <% }) %>
-                    </ul>
+                            <% }) %>
+                        </ul>
+                    </div>
                 </section>
+                <% } %>
+        
+                <!-- Completed Tasks Dropdown -->
+                <% if (completedTasks.length) { %>
+                <section>
+                    <h3>
+                        <button class="dropdown-toggle" data-target="completed-tasks">
+                            Completed Tasks (<%= completedTasks.length %>)
+                        </button>
+                    </h3>
+                    <div id="completed-tasks" class="dropdown-content">
+                        <ul>
+                            <% completedTasks.forEach(task => { %>
+                            <li>
+                                <div class="task-details">
+                                    <span class="task-title"><%= task.title %></span>
+                                    <span class="task-status">✔️ Completed</span>
+                                </div>
+                                <details>
+                                    <summary>Options</summary>
+                                    <div class="task-actions">
+                                        <form action="/tasks/<%= task._id %>/delete" method="POST">
+                                            <button type="submit" class="danger-btn">Delete</button>
+                                        </form>
+                                    </div>
+                                </details>
+                            </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </section>
+                <% } %>
+        
+                <!-- Deleted Tasks Dropdown -->
+                <% if (deletedTasks.length) { %>
+                <section>
+                    <h3>
+                        <button class="dropdown-toggle" data-target="deleted-tasks">
+                            Deleted Tasks (<%= deletedTasks.length %>)
+                        </button>
+                    </h3>
+                    <div id="deleted-tasks" class="dropdown-content">
+                        <ul>
+                            <% deletedTasks.forEach(task => { %>
+                            <li>
+                                <div class="task-details">
+                                    <span class="task-title"><%= task.title %></span>
+                                    <span class="task-status">🗑️ Deleted</span>
+                                </div>
+                                <details>
+                                    <summary>Options</summary>
+                                    <div class="task-actions">
+                                        <form action="/tasks/<%= task._id %>/restore" method="POST">
+                                            <button type="submit" class="secondary-btn">Restore</button>
+                                        </form>
+                                        <form action="/tasks/<%= task._id %>/permanentlyDelete" method="POST">
+                                            <button type="submit" class="danger-btn">Permanently Delete</button>
+                                        </form>
+                                    </div>
+                                </details>
+                            </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </section>
+                <% } %>
+        
             <% } else { %>
                 <p class="no-tasks">No tasks yet. Create one!</p>
             <% } %>
         </main>
-
         
+
         <div class="overlay"></div>
         <div class="popup-form" id="task-form-popup">
             <form action="/tasks" method="POST">
@@ -73,7 +145,6 @@
                 <button type="submit" class="primary-btn">Create Task</button>
             </form>
         </div>
-
         <footer>
             <% if (message) { %>
                 <div class="alert" id="view-alert">
@@ -88,4 +159,3 @@
     <script src="/js/dashboard.js"></script>
 </body>
 </html>
-

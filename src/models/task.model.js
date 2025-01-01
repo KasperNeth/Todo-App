@@ -22,6 +22,10 @@ const TaskSchema = new mongoose.Schema({
         enum: ["pending", "complete", "deleted"],
         default: 'pending'
     },
+    previousState: { 
+        type: String, 
+        enum: ['pending', 'completed', null] 
+    }, 
     due_date: {
         type: Date,
         required: true

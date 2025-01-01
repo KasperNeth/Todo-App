@@ -27,3 +27,21 @@ overlay.addEventListener('click', () => {
     overlay.style.display = 'none';
 });
 
+
+document.addEventListener("DOMContentLoaded", () => {
+    const toggles = document.querySelectorAll(".dropdown-toggle");
+
+    toggles.forEach(toggle => {
+        toggle.addEventListener("click", () => {
+            const targetId = toggle.getAttribute("data-target");
+            const content = document.getElementById(targetId);
+
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    });
+});
+

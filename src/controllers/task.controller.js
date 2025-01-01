@@ -75,22 +75,20 @@ const GetTask = async (req, res) => {
 
 
 const DeleteTask = async (req, res) => {
+  const { action } = req.params; 
   try {
       const response = await TaskService.DeleteTask({
           userid: req.user._id,
-          todoId: req.params.taskId 
+          todoId: req.params.taskId,
+          action,
       });
 
-      if (response.success) {
-          req.flash("message", response.message);
-      } else {
-          req.flash("error", response.message || "Failed to delete task");
-      }
-      return res.redirect("/dashboard");
+      req.flash(response.success ? "message" : "error", response.message);
+      res.redirect("/dashboard");
   } catch (error) {
-      console.error('Error deleting task:', error.message);
-      req.flash("error", "Unexpected error occurred while deleting task");
-      return res.redirect("/dashboard");
+      console.error("Error handling task action:", error.message);
+      req.flash("error", "Unexpected error occurred while handling task action");
+      res.redirect("/dashboard");
   }
 };
 
