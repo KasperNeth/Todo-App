@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/flashmsg.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome, <%= user.username %>!</h1>
+            <% if (tasks && tasks.length > 0) { %>
+                <h2 id="completion-rate">Task Completion: <%= completedPercent %>%</h2>
+            <% } %>
+        </header>
+
+        <% if (message) { %>
+            <div class="alert" id="view-alert">
+                <p><%= message %></p>
+            </div>
+        <% } %>
+
+        
+        <button id="create-task-btn" class="primary-btn">Create Task</button>
+
+        
+        <main>
+            <% if (tasks && tasks.length > 0) { %>
+                <section>
+                    <h3>All Tasks</h3>
+                    <ul>
+                        <% tasks.forEach(task => { %>
+                            <li>
+                                <div class="task-details">
+                                    <span class="task-title"><%= task.title %></span>
+                                    <span class="task-status"><%= task.state === 'completed' ? '✔️ Completed' : '❌ Pending' %></span>
+                                </div>
+                                <details>
+                                    <summary>Options</summary>
+                                    <div class="task-actions">
+                                    <% if (task.state === 'pending') { %>
+                                        <form action="/tasks/<%= task._id %>?_method=PUT" method="POST">
+                                            <button type="submit" class="secondary-btn">Mark as Completed</button>
+                                        </form>
+                                    <% } %>
+                                    <form action="/tasks/<%= task._id %>?_method=DELETE" method="POST">
+                                        <button type="submit" class="danger-btn">Delete</button>
+                                    </form>
+                                </div>
+                                </details>
+                            </li>
+                        <% }) %>
+                    </ul>
+                </section>
+            <% } else { %>
+                <p class="no-tasks">No tasks yet. Create one!</p>
+            <% } %>
+        </main>
+
+        
+        <div class="overlay"></div>
+        <div class="popup-form" id="task-form-popup">
+            <form action="/tasks" method="POST">
+                <h3>Create a New Task</h3>
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
+                <label for="dueDate">Due Date:</label>
+                <input type="date" id="dueDate" name="dueDate">
+                <button type="submit" class="primary-btn">Create Task</button>
+            </form>
+        </div>
+
+        <footer>
+            <% if (message) { %>
+                <div class="alert" id="view-alert">
+                    <p><%= message %></p>
+                </div>
+            <% } %>
+            <form action="/auth/logout" method="POST">
+                <button type="submit" class="danger-btn">Logout</button>
+            </form>
+        </footer>
+    </div>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
+

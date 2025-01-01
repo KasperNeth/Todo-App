@@ -1,125 +1,128 @@
 const TaskModel = require('../models/task.model');
-
-
-const CreateTask = async ({title, userid, description, dueDate}) => {
+const CreateTask = async ({ title, userid, description, dueDate }) => {
     try {
-        if (!title) {
-            return {
-                status: 400,
-                success: false,
-                message: "Title is required"
-            }
-        }
-        const task = new TaskModel({
-            user_id: userid,
-            title,
-            description,
-            due_date: dueDate
-        });
-        await task.save();
+      if (!title || !userid || !dueDate) {
         return {
-            status: 201,
-            success: true,
-            message: "Task created successfully",
-            data: task
-        }
-
+          status: 400,
+          success: false,
+          message: 'Title, User ID, and Due Date are required',
+        };
+      }
+  
+      const task = new TaskModel({
+        user_id: userid, 
+        title,
+        description,
+        due_date: dueDate,
+      });
+  
+      await task.save();
+  
+      return {
+        status: 201,
+        success: true,
+        message: 'Task created successfully',
+        data: task,
+      };
     } catch (error) {
-        res.status(500).send({ message: error.message || "Error occurred while creating task" });
+      console.error('Error in CreateTask service:', error.message);
+      return {
+        success: false,
+        code: 500,
+        data: null,
+        message: error.message || 'Error occurred while creating task',
+      };
     }
-}
+  };
+  
 
-const GetAllTasks = async (userid) => {
+
+
+  const GetAllTasks = async (userid, state = null) => {
     try {
-        const tasks = await TaskModel.find({ user_id: userid });
+        let query = { user_id: userid };
+        if (state) query.state = state; 
+
+        const tasks = await TaskModel.find(query);
         return {
             status: 200,
             success: true,
             data: tasks,
-            message: "Tasks retrieved successfully"
-        }
+            message: state ? `Tasks with state '${state}' retrieved successfully` : "All tasks retrieved successfully",
+        };
     } catch (error) {
-        res.status(500).send({ message: error.message|| "Error occurred while retrieving tasks" });
-    }
-}
-
-
-const GetTask = async ({userid, todoId}) => {
-    try {
-        const task = await TaskModel.findOne({ _id: taskId, user_id: userid });
-        if (!task) {
-            return res.status(404).send({ message: "Task not found" });
-        }
+        console.error("Error in GetAllTasks service:", error.message);
         return {
-            status: 200,
-            success: true,
-            data: task,
-            message: "Task retrieved successfully"
-        }
-    } catch (error) {
-        res.status(500).send({ message: error.message || "Error occurred while retrieving task" });
+            success: false,
+            code: 500,
+            data: null,
+            message: error.message || "Error occurred while retrieving tasks",
+        };
     }
-}
+};
 
-const UpdateTask = async ({userid, todoId}) => {
-    try {
-        const task = await TaskModel.findOne({ _id: todoId , user_id: userid });
-        if (!task) {
-            return res.status(404).send({ message: "Task not found" });
-        }
-        task.title = req.body.title;
-        task.description = req.body.description;
-        task.due_date = req.body.due_date;
-        await task.save();
-        return {
-            status: 200,
-            success: true,
-            data: task,
-            message: "Task updated successfully"
-        }
-    } catch (error) {
-        res.status(500).send({ message: error.message || "Error occurred while updating task" });
-    }
-}
 
-const DeleteTask = async ({userid, todoId}) => {
+  
+
+
+const GetTask = async ({ userid, todoId }) => {
     try {
         const task = await TaskModel.findOne({ _id: todoId, user_id: userid });
+
         if (!task) {
-            return res.status(404).send({ message: "Task not found" });
+            return { status: 404, success: false, message: "Task not found" };
         }
-        await task.remove();
+
+        return { status: 200, success: true, data: task, message: "Task retrieved successfully" };
+    } catch (error) {
+        return { status: 500, success: false, message: error.message || "Error occurred while retrieving task" };
+    }
+};
+
+
+
+
+const DeleteTask = async ({ userid, todoId }) => {
+    try {
+        const task = await TaskModel.findOneAndDelete({ _id: todoId, user_id: userid });
+
+        if (!task) {
+            return { status: 404, success: false, message: "Task not found" };
+        }
+
+        return { status: 200, success: true, message: "Task deleted successfully" };
+    } catch (error) {
+        return { status: 500, success: false, message: error.message || "Error occurred while deleting task" };
+    }
+};
+
+const UpdateTask = async ({ userid, todoId }) => {
+    try {
+        const task = await TaskModel.findOneAndUpdate(
+            { _id: todoId, user_id: userid }, 
+            { state: 'completed', updatedAt: new Date() },
+            { new: true } 
+        );
+
+        if (!task) {
+            return { status: 404, success: false, message: "Task not found" };
+        }
+
         return {
             status: 200,
-            success: true,
-            message: "Task deleted successfully"
-        }
-    } catch (error) {
-        res.status(500).send({ message: error.message });
-    }
-}
-
-const MarkTaskComplete = async ({ userid, todoId }) => {
-    try {
-        const task = await TaskModel.findOne({ _id: todoId, user_id: userid });
-        if (!task) {
-            return res.status(404).send({ message: "Task not found" });
-        }
-
-        task.completed = true;
-        task.updatedAt = new Date();
-        await task.save();
-
-        return {
-            code: 200,
             success: true,
             data: task,
             message: "Task marked as completed"
         };
     } catch (error) {
-        res.status(500).send({ message: error.message || "Error occurred while marking task as completed" });
+        return {
+            status: 500,
+            success: false,
+            message: error.message || "Error occurred while marking task as completed"
+        };
     }
 };
+
 
 
 module.exports = {
@@ -128,5 +131,5 @@ module.exports = {
     GetTask,
     UpdateTask,
     DeleteTask,
-    MarkTaskComplete
+    
 }
