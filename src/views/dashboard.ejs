@@ -146,11 +146,7 @@
             </form>
         </div>
         <footer>
-            <% if (message) { %>
-                <div class="alert" id="view-alert">
-                    <p><%= message %></p>
-                </div>
-            <% } %>
+            
             <form action="/auth/logout" method="POST">
                 <button type="submit" class="danger-btn">Logout</button>
             </form>
