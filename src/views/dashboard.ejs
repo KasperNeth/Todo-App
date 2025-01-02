@@ -16,7 +16,7 @@
             <% } %>
         </header>
 
-        <% if (message && message.length > 0) { %>
+        <% if (message ) { %>
             <div class="alert" id="view-alert">
                 <p><%= message %></p>
             </div>
@@ -106,7 +106,7 @@
                             <li>
                                 <div class="task-details">
                                     <span class="task-title"><%= task.title %></span>
-                                    <span class="task-status">🗑️ Deleted</span>
+                                    <span class="task-status">Deleted</span>
                                 </div>
                                 <details>
                                     <summary>Options</summary>
