@@ -36,14 +36,6 @@ header h2 {
   color: #555;
 }
 
-.alert {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  text-align: center;
-}
 
 /* Task and Section Styles */
 main {
