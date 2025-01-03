@@ -16,9 +16,14 @@
             <% } %>
         </header>
 
-        <% if (message ) { %>
-            <div class="alert" id="view-alert">
+        <% if (message && message.length > 0) { %>
+            <div class="alert success-alert view-alert">
                 <p><%= message %></p>
+            </div>
+        <% } %>
+        <% if (errorMessage && errorMessage.length > 0) { %>
+            <div class="alert error-alert view-alert">
+                <p><%= errorMessage %></p>
             </div>
         <% } %>
 
@@ -106,7 +111,7 @@
                             <li>
                                 <div class="task-details">
                                     <span class="task-title"><%= task.title %></span>
-                                    <span class="task-status">Deleted</span>
+                                    <span class="task-status">🗑️ Deleted</span>
                                 </div>
                                 <details>
                                     <summary>Options</summary>
@@ -146,7 +151,7 @@
             </form>
         </div>
         <footer>
-            
+
             <form action="/auth/logout" method="POST">
                 <button type="submit" class="danger-btn">Logout</button>
             </form>

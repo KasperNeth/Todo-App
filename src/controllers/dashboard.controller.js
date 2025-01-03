@@ -14,6 +14,9 @@ const dashBoardController = async (req, res) => {
         const completedPercent = totalTasks > 0 ? Math.round((completedTasks.data?.length / totalTasks) * 100) : 0;
 
         const successMessages = req.flash('success');
+        const errorMessages = req.flash('error');
+
+        const errorMessage = errorMessages.length > 0 ? errorMessages[0] : null;
         const message = successMessages.length > 0 ? successMessages[0] : null;
 
         res.render('dashboard', {
@@ -23,6 +26,7 @@ const dashBoardController = async (req, res) => {
             deletedTasks: deletedTasks.data || [],
             completedPercent,
             message,
+            errorMessage
         });
     } catch (error) {
         console.error("Error in dashboardController:", error.message);
@@ -32,7 +36,7 @@ const dashBoardController = async (req, res) => {
             pendingTasks: [],
             deletedTasks: [],
             completedPercent: 0,
-            message: "Error fetching tasks",
+            errorMessage: "Error fetching tasks",
         });
     }
 };
