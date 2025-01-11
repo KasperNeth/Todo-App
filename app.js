@@ -58,6 +58,16 @@ app.get('/', (req, res) => {
 })
 
 
+// Catch-all for undefined routes
+app.use((req, res, next) => {
+  const errorMessage = "Route does not exist"
+  res.status(404).render('error', { errorMessage });
+});
+app.get('/error', (req, res) => {
+  const errorMessage = ""
+  res.status(500).render('error', { errorMessage });
+});
+
 
 
 

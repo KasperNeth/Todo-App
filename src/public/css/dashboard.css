@@ -2,7 +2,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(to bottom right, #00b09b, #96c93d);
+  background: linear-gradient(to bottom right, #77d3c8, #81b428);
   color: #ffffff;
   height: 100vh;
   display: flex;
@@ -89,15 +89,39 @@ ul li {
 
 .task-details {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 10px;
 }
+
+.task-due-date {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #e41025; 
+  margin: 5px 0;
+}
+
+.task-due-date.on-time {
+  color: #19cf43; 
+}
+
+.task-description {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+  background: #f8f9fa;
+  border-left: 5px solid hsl(320, 100%, 50%);
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+
 
 .task-title {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #333; 
+  color: #333;
+  margin-bottom: 5px; 
 }
 
 .task-status {

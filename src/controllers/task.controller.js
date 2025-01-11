@@ -2,12 +2,12 @@ const TaskService = require('../services/task.service')
 
 
 const CreateTask = async (req, res) => {
-  try {
+  
     const { title, description, dueDate } = req.body;
 
     if (!title || !dueDate) {
       req.flash('error', 'Title and Due Date are required');
-      return res.redirect("/dashboard");
+      return res.status(400).redirect("/dashboard");
     }
 
     const response = await TaskService.CreateTask({
@@ -18,41 +18,34 @@ const CreateTask = async (req, res) => {
     });
 
     if (response.success) {
-      req.flash("message", "Task created successfully");
-      return res.redirect("/dashboard");
+      req.flash("success", response.message);
+      return res.status(response.code).redirect("/dashboard");
     } else {
       req.flash('error', response.message || "Failed to create task");
-      return res.redirect("/dashboard");
+      return res.status(response.code).redirect("/dashboard");
     }
-  } catch (error) {
-    console.error('Error creating task:', error.message);
-    req.flash('error', 'An unexpected error occurred');
-    return res.redirect("/dashboard");
-  }
+  
 };
 
 
 
 
 const GetAllTasks = async (req, res) => {
-  try {
-    console.log('req.user:', req.user); 
+    // console.log('req.user:', req.user); 
     const response = await TaskService.GetAllTasks(req.user._id); 
     if (response.success) {
-      return res.status(200).json(response.data); 
+      req.flash("success", response.message);
+      return res.status(response.code).redirect("/dashboard");
     } else {
       req.flash('error', response.message || 'Failed to fetch tasks');
       return res.status(500).render('error', { message: response.message });
     }
-  } catch (err) {
-    console.error('Error fetching tasks:', err.message);
-    return res.status(500).render('error', { message: 'Unexpected error occurred' });
-  }
+  
 };
 
 
 const GetTask = async (req, res) => {
-  try {
+  
       const response = await TaskService.GetTask({
           userid: req.user._id,
           todoId: req.params.taskId
@@ -63,56 +56,51 @@ const GetTask = async (req, res) => {
               task: response.data,
               message: response.message
           });
-      } else {
-          return res.status(404).render("error", { message: response.message || "Task not found" });
+      } else if (response.code === 404){
+        res.flash('error', response.message);
+      }else {
+        res.flash('error', response.message || "Failed to retrieve task");
       }
-  } catch (error) {
-      console.error('Error retrieving task:', error.message);
-      return res.status(500).render("error", { message: "Unexpected error occurred while retrieving task" });
-  }
+  
 };
 
 
 
 const DeleteTask = async (req, res) => {
   const { action } = req.params; 
-  try {
+  
       const response = await TaskService.DeleteTask({
           userid: req.user._id,
           todoId: req.params.taskId,
           action,
       });
-
-      req.flash(response.success ? "message" : "error", response.message);
-      res.redirect("/dashboard");
-  } catch (error) {
-      console.error("Error handling task action:", error.message);
-      req.flash("error", "Unexpected error occurred while handling task action");
-      res.redirect("/dashboard");
-  }
+      if (response.success) {
+        req.flash('success', response.message);
+        res.status(response.code).redirect("/dashboard");
+      } else {
+        req.flash('error', response.message);
+        res.status(response.code).redirect("/dashboard");
+      }
+  
 };
 
 
 const UpdateTask = async (req, res) => {
-  try {
+  
       const response = await TaskService.UpdateTask({
           userid: req.user._id,
           todoId: req.params.taskId
       });
 
       if (response.success) {
-          req.flash("message", response.message);
+          req.flash("success", response.message);
       } else {
           req.flash("error", response.message || "Failed to mark task as completed");
       }
 
-      // Redirect to the dashboard after marking as completed
-      return res.redirect("/dashboard");
-  } catch (error) {
-      console.error('Error marking task complete:', error.message);
-      req.flash("error", "Unexpected error occurred while marking task as complete");
-      return res.redirect("/dashboard");
-  }
+      // Redirect to the dashboard
+      return res.status(response.code).redirect("/dashboard");
+ 
 };
 
 

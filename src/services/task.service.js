@@ -3,7 +3,7 @@ const CreateTask = async ({ title, userid, description, dueDate }) => {
     try {
       if (!title || !userid || !dueDate) {
         return {
-          status: 400,
+          code: 400,
           success: false,
           message: 'Title, User ID, and Due Date are required',
         };
@@ -19,7 +19,7 @@ const CreateTask = async ({ title, userid, description, dueDate }) => {
       await task.save();
   
       return {
-        status: 201,
+        code: 201,
         success: true,
         message: 'Task created successfully',
         data: task,
@@ -45,7 +45,7 @@ const CreateTask = async ({ title, userid, description, dueDate }) => {
 
         const tasks = await TaskModel.find(query);
         return {
-            status: 200,
+            code: 200,
             success: true,
             data: tasks,
             message: state ? `Tasks with state '${state}' retrieved successfully` : "All tasks retrieved successfully",
@@ -70,12 +70,12 @@ const GetTask = async ({ userid, todoId }) => {
         const task = await TaskModel.findOne({ _id: todoId, user_id: userid });
 
         if (!task) {
-            return { status: 404, success: false, message: "Task not found" };
+            return { code: 404, success: false, message: "Task not found" };
         }
 
-        return { status: 200, success: true, data: task, message: "Task retrieved successfully" };
+        return { code: 200, success: true, data: task, message: "Task retrieved successfully" };
     } catch (error) {
-        return { status: 500, success: false, message: error.message || "Error occurred while retrieving task" };
+        return { code: 500, success: false, message: error.message || "Error occurred while retrieving task" };
     }
 };
 
@@ -89,7 +89,7 @@ const DeleteTask = async ({ userid, todoId, action }) => {
         if (action === "delete") {
             const task = await TaskModel.findOne({ _id: todoId, user_id: userid });
             if (!task) {
-                return { status: 404, success: false, message: "Task not found" };
+                return { code: 404, success: false, message: "Task not found" };
             }
 
             updateData = {
@@ -100,7 +100,7 @@ const DeleteTask = async ({ userid, todoId, action }) => {
         } else if (action === "restore") {
             const task = await TaskModel.findOne({ _id: todoId, user_id: userid, state: 'deleted' });
             if (!task) {
-                return { status: 404, success: false, message: "Task not found or not in deleted state" };
+                return { code: 404, success: false, message: "Task not found or not in deleted state" };
             }
 
             updateData = {
@@ -111,11 +111,11 @@ const DeleteTask = async ({ userid, todoId, action }) => {
         } else if (action === "permanentlyDelete") {
             const task = await TaskModel.findOneAndDelete({ _id: todoId, user_id: userid, state: 'deleted' });
             if (!task) {
-                return { status: 404, success: false, message: "Task not found or not eligible for permanent deletion" };
+                return { code: 404, success: false, message: "Task not found or not eligible for permanent deletion" };
             }
-            return { status: 200, success: true, message: "Task permanently deleted" };
+            return { code: 200, success: true, message: "Task permanently deleted" };
         } else {
-            return { status: 400, success: false, message: "Invalid action" };
+            return { code: 400, success: false, message: "Invalid action" };
         }
 
         const updatedTask = await TaskModel.findOneAndUpdate(
@@ -125,12 +125,12 @@ const DeleteTask = async ({ userid, todoId, action }) => {
         );
 
         if (!updatedTask) {
-            return { status: 404, success: false, message: "Task not found" };
+            return { code: 404, success: false, message: "Task not found" };
         }
 
-        return { status: 200, success: true, message: `Task successfully ${action === "delete" ? "moved to deleted" : "restored"}` };
+        return { code: 200, success: true, message: `Task successfully ${action === "delete" ? "moved to deleted" : "restored"}` };
     } catch (error) {
-        return { status: 500, success: false, message: error.message || "Error occurred while processing task action" };
+        return { code: 500, success: false, message: error.message || "Error occurred while processing task action" };
     }
 };
 
@@ -145,18 +145,18 @@ const UpdateTask = async ({ userid, todoId }) => {
         );
 
         if (!task) {
-            return { status: 404, success: false, message: "Task not found" };
+            return { code: 404, success: false, message: "Task not found" };
         }
 
         return {
-            status: 200,
+            code: 200,
             success: true,
             data: task,
             message: "Task marked as completed"
         };
     } catch (error) {
         return {
-            status: 500,
+            code: 500,
             success: false,
             message: error.message || "Error occurred while marking task as completed"
         };

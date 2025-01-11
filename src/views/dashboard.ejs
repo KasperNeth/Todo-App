@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/flashMsg.css">
+    <link rel="stylesheet" href="/css/flashmsg.css">
 </head>
 <body>
     <div class="container">
@@ -46,12 +46,15 @@
                             <li>
                                 <div class="task-details">
                                     <span class="task-title"><%= task.title %></span>
-                                    <span class="task-status">❌ Pending</span>
+                                    <span class="task-due-date <%= new Date(task.due_date) > new Date() ? 'on-time' : '' %>">
+                                        DueDate: <%= task.due_date %>
+                                    </span>
+                                    <span class="task-description"><%= task.description %></span>
                                 </div>
                                 <details>
                                     <summary>Options</summary>
                                     <div class="task-actions">
-                                        <form action="/tasks/<%= task._id %>/delete" method="POST">
+                                        <form action="/tasks/<%= task._id %>/delete?_method=DELETE"  method="POST">
                                             <button type="submit" class="danger-btn">Delete</button>
                                         </form>
                                         <form action="/tasks/<%= task._id %>?_method=PUT" method="POST">
@@ -80,12 +83,13 @@
                             <li>
                                 <div class="task-details">
                                     <span class="task-title"><%= task.title %></span>
-                                    <span class="task-status">✔️ Completed</span>
+                                    <span class="task-description"><%= task.description %></span>
+                                
                                 </div>
                                 <details>
                                     <summary>Options</summary>
                                     <div class="task-actions">
-                                        <form action="/tasks/<%= task._id %>/delete" method="POST">
+                                        <form action="/tasks/<%= task._id %>/delete?_method=DELETE"  method="POST">
                                             <button type="submit" class="danger-btn">Delete</button>
                                         </form>
                                     </div>
@@ -111,15 +115,16 @@
                             <li>
                                 <div class="task-details">
                                     <span class="task-title"><%= task.title %></span>
-                                    <span class="task-status">🗑️ Deleted</span>
+                                    <span class="task-description"><%= task.description %></span>
+                                  
                                 </div>
                                 <details>
                                     <summary>Options</summary>
                                     <div class="task-actions">
-                                        <form action="/tasks/<%= task._id %>/restore" method="POST">
+                                        <form action="/tasks/<%= task._id %>/restore?_method=DELETE" method="POST">
                                             <button type="submit" class="secondary-btn">Restore</button>
                                         </form>
-                                        <form action="/tasks/<%= task._id %>/permanentlyDelete" method="POST">
+                                        <form action="/tasks/<%= task._id %>/permanentlyDelete?_method=DELETE" method="POST">
                                             <button type="submit" class="danger-btn">Permanently Delete</button>
                                         </form>
                                     </div>

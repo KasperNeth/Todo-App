@@ -9,7 +9,7 @@ route.post("/", AuthMiddleware.AuthenticateUser, TaskServiceController.CreateTas
 route.get("/", AuthMiddleware.AuthenticateUser, TaskServiceController.GetAllTasks);
 route.get("/:taskId", AuthMiddleware.AuthenticateUser, TaskServiceController.GetTask);
 route.put("/:taskId", AuthMiddleware.AuthenticateUser, TaskServiceController.UpdateTask);
-route.post("/:taskId/:action", AuthMiddleware.AuthenticateUser, TaskServiceController.DeleteTask);;
+route.delete("/:taskId/:action", AuthMiddleware.AuthenticateUser, TaskServiceController.DeleteTask);;
 
 
 module.exports = route

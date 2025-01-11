@@ -49,7 +49,7 @@ const Login = async (req, res) => {
         req.flash('error', 'Failed to save session. Please try again.');
         return res.status(500).render("login", { message: "Failed to save session. Please try again." });
       }
-      return res.redirect("/dashboard");
+      return res.status(loginResponse.code).redirect("/dashboard");
     });
   });
 };
